@@ -9,12 +9,12 @@ public class FishController : MonoBehaviour
     public Transform[] WanderPositions;
     public Rigidbody m_Rb;
 
-
+    GameObject go_gm;
 
     void Start()
     {
         m_Rb = this.GetComponent<Rigidbody>();
-
+        go_gm = GameObject.FindWithTag("GameManager");
         switch (this.tag)
         {
             case "BigPoisoned":
@@ -42,12 +42,15 @@ public class FishController : MonoBehaviour
        int i = fish.HangAround(WanderPositions,this.transform);
         transform.LookAt(WanderPositions[i]);
         transform.rotation *= Quaternion.Euler(0, 90, 0);
+
+
+        if (go_gm.GetComponent<GameManager>().IsGameOver)
+            Destroy(this.gameObject);
     }
 
 
     private void OnCollisionEnter(Collision collision)
     {
-        //if (collision.gameObject.layer == layerToIgnore)
             Physics.IgnoreCollision(collision.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
     }
 

@@ -8,6 +8,9 @@ TagManager:
   - BigPoisoned
   - Healty
   - Healthy
+  - GObutton
+  - GOtext
+  - GameManager
   layers:
   - Default
   - TransparentFX

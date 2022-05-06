@@ -6,45 +6,59 @@ using UnityEngine.UI;
 public class Shark : MonoBehaviour
 {
 
-    int Health =100;
+   public int Health =100;
     
-    public float speed = 8.0f;
+    public float speed = 12.0f;
     public Camera followCamera;
 
     private Rigidbody m_Rb;
     private Vector3 m_CameraPos;
 
     public Text Healthtxt;
+
+    GameObject go_gm;
+
     void Awake()
     {
         m_Rb = GetComponent<Rigidbody>();
         m_CameraPos = followCamera.transform.position - transform.position;
     }
 
+    void Start()
+    {
+        go_gm = GameObject.FindWithTag("GameManager");
+    }
+
     void FixedUpdate()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput).normalized;
-
-        if (movement == Vector3.zero)
+        if (!go_gm.GetComponent<GameManager>().IsGameOver)
         {
-            return;
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+
+            Vector3 movement = new Vector3(horizontalInput, 0, verticalInput).normalized;
+
+            if (movement == Vector3.zero)
+            {
+                return;
+            }
+
+            Quaternion targetRotation = Quaternion.LookRotation(movement);
+
+            targetRotation.eulerAngles += new Vector3(0, 90, 0);
+            targetRotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                360 * Time.fixedDeltaTime);
+
+            m_Rb.MovePosition(m_Rb.position + movement * speed * Time.fixedDeltaTime);
+
+
+            m_Rb.MoveRotation(targetRotation);
         }
 
-        Quaternion targetRotation = Quaternion.LookRotation(movement);
 
-        targetRotation.eulerAngles += new Vector3(0, 90, 0);
-        targetRotation = Quaternion.RotateTowards(
-            transform.rotation,
-            targetRotation,
-            360 * Time.fixedDeltaTime);
-
-        m_Rb.MovePosition(m_Rb.position + movement * speed * Time.fixedDeltaTime);
-
-        
-        m_Rb.MoveRotation(targetRotation);
     }
 
     private void LateUpdate()
